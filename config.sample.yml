@@ -1,0 +1,12 @@
+api:
+  API_Key: ""
+  API_Secret_Key: ""
+  Access_Token: ""
+  Access_Token_Secret: ""
+
+  option:
+    query: ''
+    lang: 'ja'
+    result_type: 'recent'
+    count: 10
+    cooldown: 3
