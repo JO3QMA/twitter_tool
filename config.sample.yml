@@ -4,9 +4,9 @@ api:
   Access_Token: ""
   Access_Token_Secret: ""
 
-  option:
-    query: ''
-    lang: 'ja'
-    result_type: 'recent'
-    count: 10
-    cooldown: 3
+option:
+  query: ''
+  lang: 'ja'
+  result_type: 'recent'
+  count: 10
+  cooldown: 3
