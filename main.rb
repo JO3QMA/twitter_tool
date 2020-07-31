@@ -59,6 +59,7 @@ class TweetController
       @client.favorite(tweet)
       p tweet
       sleep @option['cooldown']
+      sleep rand(30)
     end
   end
 
