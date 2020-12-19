@@ -14,6 +14,7 @@ config.yml
 *.code-workspace
 /vendor/
 tweet_id.txt
+*.json
 # Used by dotenv library to load environment variables.
 # .env
 
