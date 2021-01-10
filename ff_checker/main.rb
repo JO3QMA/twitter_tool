@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bundler/setup'
 require 'rubygems'
 require 'json'
@@ -13,7 +15,7 @@ class FFChecker
     config_file = YAML.load_file('./config.yml')
     api = config_file['api']
     @config_option = config_file['option']
-    puts 'Config.ymlをロードしました'
+    puts 'config.ymlをロードしました'
     @client = Twitter::REST::Client.new do |config|
       config.consumer_key        = api['API_Key']
       config.consumer_secret     = api['API_Secret_Key']
@@ -29,21 +31,9 @@ class FFChecker
 
   def load_yest_ffs
     puts '昨日のFFの読み込み開始'
-    @yest_follower_ids = if File.exist?(@yest_follower_file)
-                           open(@yest_follower_file) do |io|
-                             JSON.load(io)
-                           end
-                         else
-                           []
-                         end
+    @yest_follower_ids = load_json(@yest_follower_file)
     puts "昨日のフォロワー: #{@yest_follower_ids.size}人"
-    @yest_friend_ids = if File.exist?(@yest_friend_file)
-                         open(@yest_friend_file) do |io|
-                           JSON.load(io)
-                         end
-                       else
-                         []
-                       end
+    @yest_friend_ids = load_json(@yest_friend_file)
     puts "昨日のフォロー中: #{@yest_friend_ids.size}人"
   end
 
@@ -55,12 +45,14 @@ class FFChecker
       @client.users(slice).each do |follower|
         @today_follower << extract_user_data(follower)
       end
+      sleep 10
     end
     puts "今日のフォロワー: #{@today_follower.size}人"
     @client.friend_ids.each_slice(100).each do |slice|
       @client.users(slice).each do |friend|
         @today_friend << extract_user_data(friend)
       end
+      sleep 10
     end
     puts "今日のフォロー中: #{@today_friend.size}人"
   end
@@ -76,34 +68,19 @@ class FFChecker
     user_data
   end
 
-  def load_user_cache
-    puts '過去のユーザーキャッシュの読み込み'
-    array = if File.exist?(@user_cache_file)
-              open(@user_cache_file) do |io|
-                JSON.load(io)
-              end
-            else
-              []
-            end
-    array
-  end
-
   # ユーザーキャッシュの作成。
   def generate_user_cache
     puts 'ユーザーキャッシュの作成開始'
     puts '今日のFFから作成'
     @user_cache = check_duplication(@today_follower, @today_friend, 'id')
-    puts @user_cache.size.to_s
     puts '過去のユーザーキャッシュから不足分のみ追加'
-    @user_cache = check_duplication(load_user_cache, @user_cache, 'id')
-    puts @user_cache.size.to_s
+    @user_cache = check_duplication(load_json(@user_cache_file), @user_cache, 'id')
     puts 'ユーザーキャッシュを保存'
   end
 
   # 連想配列を含む配列のマージ
   def check_duplication(source, target, key)
     result = target.dup
-    puts "Source: #{source.size} Target: #{target.size}"
     source.each do |source_user|
       target.each_with_index do |target_user, i|
         if target_user[key] == source_user[key]
@@ -156,7 +133,7 @@ class FFChecker
   def generate_msg
     msg = " #{Date.today.to_time}
     フォロー中: #{@today_follower_ids.size}人
-    フォロワー: #{@today_friend_ids.size}人   \n
+    フォロワー: #{@today_friend_ids.size}人 \n
     減ったフォロワー: #{@decreased_follower.size}人 \n #{user_data_formatter(@decreased_follower)} \n
     減ったフォロー中: #{@decreased_friend.size}人   \n #{user_data_formatter(@decreased_friend)}   \n
     増えたフォロワー: #{@increased_follower.size}人 \n #{user_data_formatter(@increased_follower)} \n
@@ -165,9 +142,21 @@ class FFChecker
     msg
   end
 
+  # 自分宛にDMを送信
   def send_direct_message(msg)
     user = @client.user.id
     @client.create_direct_message(user, msg)
+  end
+
+  # JSONの読み込み
+  def load_json(path)
+    if File.exist?(path)
+      File.open(path) do |io|
+        return JSON.load(io)
+      end
+    else
+      []
+    end
   end
 
   # JSONの保存
