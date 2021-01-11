@@ -45,14 +45,14 @@ class FFChecker
       @client.users(slice).each do |follower|
         @today_follower << extract_user_data(follower)
       end
-      sleep 10
+      sleep 5
     end
     puts "今日のフォロワー: #{@today_follower.size}人"
     @client.friend_ids.each_slice(100).each do |slice|
       @client.users(slice).each do |friend|
         @today_friend << extract_user_data(friend)
       end
-      sleep 10
+      sleep 5
     end
     puts "今日のフォロー中: #{@today_friend.size}人"
   end
