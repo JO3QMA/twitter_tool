@@ -30,31 +30,29 @@ class FFChecker
   end
 
   def load_yest_ffs
-    puts '昨日のFFの読み込み開始'
+    puts '前回のFFの読み込み開始'
     @yest_follower_ids = load_json(@yest_follower_file)
-    puts "昨日のフォロワー: #{@yest_follower_ids.size}人"
+    puts "前回のフォロワー: #{@yest_follower_ids.size}人"
     @yest_friend_ids = load_json(@yest_friend_file)
-    puts "昨日のフォロー中: #{@yest_friend_ids.size}人"
+    puts "前回のフォロー中: #{@yest_friend_ids.size}人"
   end
 
   def get_today_ffs
-    puts '今日のFFの取得開始'
+    puts '現在のFFの取得開始'
     @today_follower = []
     @today_friend   = []
     @client.follower_ids.each_slice(100).each do |slice|
       @client.users(slice).each do |follower|
         @today_follower << extract_user_data(follower)
       end
-      sleep 5
     end
-    puts "今日のフォロワー: #{@today_follower.size}人"
+    puts "現在のフォロワー: #{@today_follower.size}人"
     @client.friend_ids.each_slice(100).each do |slice|
       @client.users(slice).each do |friend|
         @today_friend << extract_user_data(friend)
       end
-      sleep 5
     end
-    puts "今日のフォロー中: #{@today_friend.size}人"
+    puts "現在のフォロー中: #{@today_friend.size}人"
   end
 
   # get_today_ffsからしか呼び出されない
@@ -71,7 +69,7 @@ class FFChecker
   # ユーザーキャッシュの作成。
   def generate_user_cache
     puts 'ユーザーキャッシュの作成開始'
-    puts '今日のFFから作成'
+    puts '現在のFFから作成'
     @user_cache = check_duplication(@today_follower, @today_friend, 'id')
     puts '過去のユーザーキャッシュから不足分のみ追加'
     @user_cache = check_duplication(load_json(@user_cache_file), @user_cache, 'id')
