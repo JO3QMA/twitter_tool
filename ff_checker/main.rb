@@ -83,8 +83,8 @@ class FFChecker
       target.each_with_index do |target_user, i|
         if target_user[key] == source_user[key]
           break
-        else
-          result << source_user if i == target.length - 1
+        elsif i == target.length - 1
+          result << source_user
         end
       end
     end
@@ -129,7 +129,7 @@ class FFChecker
   end
 
   def generate_msg
-    msg = " #{Date.today.to_time}
+    " #{Date.today.to_time}
     フォロー中: #{@today_follower_ids.size}人
     フォロワー: #{@today_friend_ids.size}人 \n
     減ったフォロワー: #{@decreased_follower.size}人 \n #{user_data_formatter(@decreased_follower)} \n
@@ -137,7 +137,6 @@ class FFChecker
     増えたフォロワー: #{@increased_follower.size}人 \n #{user_data_formatter(@increased_follower)} \n
     増えたフォロー中: #{@increased_friend.size}人   \n #{user_data_formatter(@increased_friend)}   \n
     "
-    msg
   end
 
   # 自分宛にDMを送信

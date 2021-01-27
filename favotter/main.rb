@@ -43,7 +43,8 @@ class TweetController
     since_id = @last_tweet
     p since_id
     p '取得開始'
-    result = @client.search(query, result_type: result_type, exclude: 'retweets', since_id: since_id, lang: lang, count: count).take(count)
+    result = @client.search(query, result_type: result_type, exclude: 'retweets', since_id: since_id, lang: lang,
+                                   count: count).take(count)
     result.reverse_each do |tweet|
       unless @id_list.include?(tweet.user.id)
         @tweet_list.push tweet.id
