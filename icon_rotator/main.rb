@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# require 'bundler/setup'
+require 'bundler/setup'
 require 'rubygems'
 require 'yaml'
 require 'twitter'
@@ -41,7 +41,15 @@ class IconRotator
 
   def crop_icon(image, side_length)
     img = image.crop(0, 0, side_length, side_length)
+    img = img.
     img.write('test.png')
+  end
+
+  def cut_out_circle(image side_length)
+    circle = Magick::Image.new side_length side_length
+    gc = Magick::Draw.new
+    gc.fill 'black'
+    
   end
 
   def upload_icon
