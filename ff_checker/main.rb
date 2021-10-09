@@ -130,8 +130,8 @@ class FFChecker
 
   def generate_msg
     " #{Date.today.to_time}
-    フォロー中: #{@today_follower_ids.size}人
-    フォロワー: #{@today_friend_ids.size}人 \n
+    フォロー中: #{@today_friend_ids.size}人
+    フォロワー: #{@today_follower_ids.size}人 \n
     減ったフォロワー: #{@decreased_follower.size}人 \n #{user_data_formatter(@decreased_follower)} \n
     減ったフォロー中: #{@decreased_friend.size}人   \n #{user_data_formatter(@decreased_friend)}   \n
     増えたフォロワー: #{@increased_follower.size}人 \n #{user_data_formatter(@increased_follower)} \n
